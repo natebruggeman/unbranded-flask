@@ -2,6 +2,8 @@ from peewee import *
 
 DATABASE = SqliteDatabase('garments.sqlite')
 
+class Order(Model):
+
 
 class Garment(Model):
     style = CharField()
@@ -21,9 +23,10 @@ class Address(Model):
     class Meta:
         database = DATABASE
 
-        
+
+
+
 def initialize():
     DATABASE.connect()
     DATABASE.create_tables([Garment], safe=True)
-    print("TABLES Created")
     DATABASE.close()
