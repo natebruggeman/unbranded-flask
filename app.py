@@ -3,6 +3,7 @@ import requests #connection to S&S
 from flask_cors import CORS
 import models
 from resources.garments import garment_bp
+from resources.addresses import address_bp
 
 
 
@@ -51,8 +52,10 @@ def after_request(response):
 
 
 CORS(garment_bp, origins=['http://localhost:3000'], supports_credentials=True) 
+CORS(address_bp, origins=['http://localhost:3000'], supports_credentials=True) 
 
 app.register_blueprint(garment_bp, url_prefix='/api/v1/garments') 
+app.register_blueprint(address_bp, url_prefix='/api/v1/checkout') 
 
 
 

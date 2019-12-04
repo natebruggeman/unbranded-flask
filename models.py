@@ -13,15 +13,15 @@ class Garment(Model):
     class Meta:
         database = DATABASE
 
-# class Address(Model):
-#     attn = CharField()
-#     address = CharField()
-#     city = CharField()
-#     state = CharField()
-#     zipcode = CharField()
+class Address(Model):
+    attn = CharField()
+    address = CharField()
+    city = CharField()
+    state = CharField()
+    zipcode = CharField()
 
-#     class Meta:
-#         database = DATABASE
+    class Meta:
+        database = DATABASE
 
 
 # the post request to S&S will have Garment as lines and address as 
@@ -30,5 +30,5 @@ class Garment(Model):
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Garment], safe=True)
+    DATABASE.create_tables([Garment, Address], safe=True)
     DATABASE.close()
