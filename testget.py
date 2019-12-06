@@ -35,6 +35,21 @@ def after_request(response):
     return response  
 
 
+@app.route('/list')
+def list():
+	garments = Garment.select()
+	results = []
+	for garment in garments:
+		info = {'gtin': garment.gtin,
+				'brandName': garment.brand,
+				'colorName': garment.color,
+				'sizeName': garment.size,
+				'piecePrice': str(garment.price)}
+		results.append(info)
+
+	return jsonify(results)
+
+
 
 @app.route('/refresh_garments')
 def index():
