@@ -4,7 +4,8 @@ from flask_cors import CORS
 import models
 from resources.garments import garment_bp
 from resources.addresses import address_bp
-
+from resources.carts import cart_bp
+from resources.orders import order_bp
 
 
 DEBUG = True
@@ -16,17 +17,6 @@ app = Flask(__name__)
 
 app.secret_key = "Ernie Kendrick Rosie"
 
-
-
-
-#### get requests
-# req = requests.get(url='https://api.ssactivewear.com/v2/styles?search=Gildan 5000', 
-# 	auth=('504411', '4f4d8aa6-3d5b-4b63-a200-148ebc775938'))
-
-# print(req.text)
-# print(req.json())
-# breakpoint()
-# in combo with a CLI command about JSON and [0] will allow me to grab different key value pairs
 
 
 #app routes
@@ -53,9 +43,14 @@ def after_request(response):
 
 CORS(garment_bp, origins=['http://localhost:3000'], supports_credentials=True) 
 CORS(address_bp, origins=['http://localhost:3000'], supports_credentials=True) 
+CORS(cart_bp, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(order_bp, origins=['http://localhost:3000'], supports_credentials=True)
+
 
 app.register_blueprint(garment_bp, url_prefix='/api/v1/garments') 
-app.register_blueprint(address_bp, url_prefix='/api/v1/checkout') 
+app.register_blueprint(address_bp, url_prefix='/api/v1/address') 
+app.register_blueprint(cart_bp, url_prefix='/api/v1/cart') 
+app.register_blueprint(order_bp, url_prefix='/api/v1/order') 
 
 
 
@@ -63,3 +58,6 @@ app.register_blueprint(address_bp, url_prefix='/api/v1/checkout')
 if __name__ == '__main__':
 	models.initialize()
 	app.run(debug=DEBUG, port=PORT)
+
+
+

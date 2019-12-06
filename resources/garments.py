@@ -24,11 +24,22 @@ def get_all_garments():
 def create_garments():
     
     payload = request.get_json()
-    # print(type(payload), 'payload')
     garment = models.Garment.create(**payload)    
-    # print(garment.__dict__)
-    # print(dir(garment))
-    # print(model_to_dict(garment), 'model to dict')
     garment_dict = model_to_dict(garment)
     return jsonify(data=garment_dict, status={"code": 201, "message": "Success"})
+
+
+
+@garment_bp.route('/<id>', methods=["GET"])
+def get_one_garment(id):
+    print(id)
+    garment = models.Garment.get_by_id(id)
+
+    return jsonify(data=model_to_dict(garment), status={"code": 200, "message": "Success"})
+
+
+
+
+
+
 
