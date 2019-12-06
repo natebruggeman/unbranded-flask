@@ -19,6 +19,7 @@ class Garment(Model):
 	gtin = IntegerField()
 	size = CharField()
 	price  = DecimalField(max_digits=5, decimal_places=2)
+	picture = CharField()
 
 	class Meta:
 		database = DATABASE
@@ -35,10 +36,13 @@ class Order(Model):
 	class Meta:
 		database = DATABASE
 
+class Cart(Model):
+    quantity = IntegerField()
+    garment = ForeignKeyField(Garment, backref='products')
+    paid = BooleanField()
 
-			
 
-
+### Connect to DB and disconnect
 
 @app.before_request
 def before_request():
@@ -52,6 +56,8 @@ def after_request(response):
     return response  
 
 
+
+#showing all garments in DB
 @app.route('/list')
 def list():
 	garments = Garment.select()
@@ -61,13 +67,15 @@ def list():
 				'brandName': garment.brand,
 				'colorName': garment.color,
 				'sizeName': garment.size,
-				'piecePrice': str(garment.price)}
+				'piecePrice': str(garment.price),
+				'colorFrontImage': garment.picture
+				}
 		results.append(info)
 
 	return jsonify(results)
 
 
-
+#show individual garments
 @app.route('/list/<id>', methods=["GET"])
 def list_one_garment(id):
 	garment = Garment.get_by_id(id)
@@ -77,7 +85,7 @@ def list_one_garment(id):
 	return jsonify(data=garm_dict, status={"code": 200, "message": "Success"})
 
 
-
+# add products to DB 
 @app.route('/refresh_garments')
 def index():
 
@@ -91,12 +99,13 @@ def index():
 	req_json = req.json()
 
 	for garment in req_json:
-		if garment['colorName'] in ('Military Green', 'Ash'):
+		if garment['colorName'] in ('Military Green', 'Ash', 'Maroon'):
 			new = Garment(color=garment['colorName'],
 				gtin=garment['gtin'],
 				brand=garment['brandName'],
 				price=garment['piecePrice'],
-				size=garment['sizeName'])
+				size=garment['sizeName'],
+				picture=garment['colorFrontImage'])
 			new.save()
 
 
