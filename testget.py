@@ -1,13 +1,14 @@
 from flask import Flask, render_template, g, jsonify, request
 import requests, json #connection to S&S
 from peewee import *
-
-
+from playhouse.shortcuts import model_to_dict
+from decimal import Decimal
 
 
 app = Flask(__name__)
 DEBUG = True
 PORT = 8000
+
 
 DATABASE = SqliteDatabase('nate.sqlite')
 # , pragmas={'foreign_keys': 1} removed from end of sqlitedb
@@ -29,10 +30,14 @@ class Order(Model):
 	shippingState= CharField()
 	shippingZip= IntegerField()
 	creditCard= IntegerField()
-	user = CharField()
+	# user = CharField()
 
 	class Meta:
 		database = DATABASE
+
+
+			
+
 
 
 @app.before_request
@@ -60,6 +65,16 @@ def list():
 		results.append(info)
 
 	return jsonify(results)
+
+
+
+@app.route('/list/<id>', methods=["GET"])
+def list_one_garment(id):
+	garment = Garment.get_by_id(id)
+	garm_dict= model_to_dict(garment)
+	#turns price from a decimal to a string
+	garm_dict["price"] = str(garm_dict["price"])
+	return jsonify(data=garm_dict, status={"code": 200, "message": "Success"})
 
 
 
@@ -93,7 +108,7 @@ def index():
 
 
 
-@app.route('/orders', methods=['POST'])
+@app.route('/orders/', methods=['POST'])
 def create_orders():
 	"""
 	{
@@ -114,21 +129,44 @@ def create_orders():
 	   "creditCard":"12345"
 	}
 	"""
-
 	data = request.get_json()
 	print(data)
+	# breakpoint()
 
-	order = Order(items=data["items"],
+	order = Order(items=json.dumps(data["items"]), # stringifying
 		shippingAddress= data["shippingAddress"],
 		shippingCity= data["shippingCity"],
 		shippingState= data["shippingState"],
 		shippingZip= data["shippingZip"],
 		creditCard= data["creditCard"],
-		user = "this will be from session"
+		# user = "this will be from session"
 		)
 	order.save()
+	print(order)
 
-	return 200
+	return 'ok', 200
+
+
+
+
+DATABASE.connect()
+DATABASE.create_tables([Garment, Order], safe=True)
+print("Created tables if they weren't already there")
+
+DATABASE.close()
+
+
+if __name__ == '__main__':
+	# initialize()
+	app.run(debug=DEBUG, port=PORT)
+
+
+
+
+
+
+
+
 
 
 
@@ -150,23 +188,10 @@ def create_orders():
 # print(dict_data)
 
 # print(data)
-
 # python_obj = json.loads(data)
-
 # print(python_obj['sizeName: XL'])
 
 # breakpoint()
-
 # in combo with a CLI command about JSON and [0] will allow me to grab different key value pairs
 
 # def initialize():
-DATABASE.connect()
-DATABASE.create_tables([Garment], safe=True)
-print("Created tables if they weren't already there")
-
-DATABASE.close()
-
-
-if __name__ == '__main__':
-	# initialize()
-	app.run(debug=DEBUG, port=PORT)
