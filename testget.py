@@ -2,7 +2,7 @@ from flask import Flask, render_template, g, jsonify, request
 import requests, json #connection to S&S
 from peewee import *
 from playhouse.shortcuts import model_to_dict
-from decimal import Decimal
+# from decimal import Decimal
 
 
 app = Flask(__name__)
@@ -12,6 +12,10 @@ PORT = 8000
 
 DATABASE = SqliteDatabase('nate.sqlite')
 # , pragmas={'foreign_keys': 1} removed from end of sqlitedb
+
+
+
+########################### MODELS START#####################################
 
 class Garment(Model):
 	color = CharField()
@@ -41,6 +45,7 @@ class Cart(Model):
     garment = ForeignKeyField(Garment, backref='products')
     paid = BooleanField()
 
+########################### MODELS END #####################################
 
 ### Connect to DB and disconnect
 
@@ -55,7 +60,7 @@ def after_request(response):
     g.db.close()
     return response  
 
-
+###########################GARMENTS START#####################################
 
 #showing all garments in DB
 @app.route('/list')
@@ -89,7 +94,6 @@ def list_one_garment(id):
 @app.route('/refresh_garments')
 def index():
 
-
 	garments = Garment.select()
 	for garment in garments:
 		garment.delete_instance()
@@ -112,9 +116,27 @@ def index():
 	return render_template('garments.html')
 
 
+########################### GARMENTS END #####################################
+
+
+########################### CART START #####################################
 
 
 
+
+
+
+
+
+
+
+
+
+
+########################### CART END #####################################
+
+
+###########################ORDERS START#####################################
 
 
 @app.route('/orders/', methods=['POST'])
@@ -155,6 +177,29 @@ def create_orders():
 
 	return 'ok', 200
 
+
+########################### ORDERS END #####################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################### DB CONNECTION/ CREATION#####################################
 
 
 
