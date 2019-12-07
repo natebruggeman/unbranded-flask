@@ -40,10 +40,24 @@ class Order(Model):
 	class Meta:
 		database = DATABASE
 
-class Cart(Model):
-    quantity = IntegerField()
-    garment = ForeignKeyField(Garment, backref='products')
-    paid = BooleanField()
+# class Cart(Model):
+#     quantity = IntegerField()
+#     garment = ForeignKeyField(Garment, backref='products')
+#     paid = BooleanField()
+
+class CartItem(Model):
+	color = CharField()
+	size = CharField()
+	garment = ForeignKeyField(Garment, backref='garments')
+	warehouseAbbr = CharField(default="IL")
+	# identifier = IntegerField() # gtin
+	quantity = IntegerField()
+	paid = BooleanField(default= False)
+    # cart = ForeignKeyField(Order, backref='cart')
+    # price = # calc based on API 
+	class Meta:
+		database = DATABASE
+
 
 ########################### MODELS END #####################################
 
@@ -122,15 +136,59 @@ def index():
 ########################### CART START #####################################
 
 
+# @app.route('/cart/<id>', methods=["POST"])
+# def create_cart_item(id):
+# 	breakpoint()
+# 	garment= Garment.get_by_id(id)
+# 	garm_dict= model_to_dict(garment)
+
+# 	print(garm_dict)
+
+# 	data = request.get_json()
+# 	print(data)
+
+# 	cart_item = models.CartItem.create(
+# 		quantity=data['quantity'],
+# 		paid=data['paid'],
+# 	)
+# 	cart_dict = model_to_dict(cart_item)
+# 	return jsonify(data=cart_dict, status={"code": 201, "message": "You successfully created your cart"})
+# 	# return 'ok', 200
 
 
+@app.route('/<id>', methods=['POST'])
+def create_cart(id):
 
+	payload = request.get_json()
 
+	print(payload)
 
+	first_item = CartItem(
+		quantity=1,
+	 	paid= False,
+	 	color= payload['color'],
+	 	size= payload['size'],
+	 	brand= payload['brand'],
+		garment = payload['garment'],
+		# identifier = payload['gtin'] # gtin	
+	 )
+	breakpoint()
+	first_item.save()
+		# color = CharField()
+		# size = CharField()
+		# name = CharField()
+		# garment = ForeignKeyField(Garment, backref='garments')
+		# warehouseAbbr = CharField(default="IL")
+		# identifier = IntegerField() # gtin
+		# quantity = IntegerField()
+		# paid = BooleanField(default= False)
 
+		# cart_hash
 
-
-
+	# cart_dict = model_to_dict(first_item)
+	# print(cart_dict)
+	return 'ok', 200
+	# return jsonify(data=cart_dict, status={"code": 201, "message": "You successfully created your cart"})
 
 
 ########################### CART END #####################################
@@ -204,7 +262,7 @@ def create_orders():
 
 
 DATABASE.connect()
-DATABASE.create_tables([Garment, Order], safe=True)
+DATABASE.create_tables([Garment, Order, CartItem], safe=True)
 print("Created tables if they weren't already there")
 
 DATABASE.close()
