@@ -6,6 +6,7 @@ from resources.garments import garment_bp
 from resources.addresses import address_bp
 from resources.carts import cart_bp
 from resources.orders import order_bp
+import os
 
 
 DEBUG = True
@@ -52,8 +53,9 @@ app.register_blueprint(address_bp, url_prefix='/api/v1/address')
 app.register_blueprint(cart_bp, url_prefix='/api/v1/cart') 
 app.register_blueprint(order_bp, url_prefix='/api/v1/order') 
 
-
-
+if 'ON_HEROKU' in os.environ: 
+  print('\non heroku!')
+  models.initialize()
 
 if __name__ == '__main__':
 	models.initialize()
