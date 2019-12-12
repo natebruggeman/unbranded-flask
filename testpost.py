@@ -1,14 +1,14 @@
 import requests
 
-def get_orders():
+# def get_orders():
 
-	req = requests.post(url='https://api.ssactivewear.com/v2/orders/', 
-		auth=('504411', '4f4d8aa6-3d5b-4b63-a200-148ebc775938'))
+# 	req = requests.post(url='https://api.ssactivewear.com/v2/orders/', 
+# 		auth=('504411', '4f4d8aa6-3d5b-4b63-a200-148ebc775938'))
 
 
-	print(req.text)
-	print(req.json())
-
+# 	print(req.text)
+# 	print(req.json())
+ 
 
 
 
@@ -47,15 +47,15 @@ def post_orders():
 def create_cart():
 
 	data ={
-	"garment": "1234556788889",
+	"garment": "Hello",
 	"color": "Ash",
-	"size": "M",
+	"size": "L",
 	"brand": "BELLA + CANVAS",
-	"gtin": "884913236264"
+	"gtin": "88666664666"
 	}
 	
 
-	req = requests.post(url='http://localhost:8000/3', 
+	req = requests.post(url='http://localhost:8000/shoppingcart', 
 		json=data)
 	breakpoint()
 

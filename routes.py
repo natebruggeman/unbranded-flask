@@ -1,6 +1,7 @@
 from flask import Flask, render_template, g, jsonify, request
 import requests, json #connection to S&S
 from peewee import *
+from flask_cors import CORS
 from playhouse.shortcuts import model_to_dict
 # from decimal import Decimal
 
@@ -61,6 +62,7 @@ class CartItem(Model):
 
 ########################### MODELS END #####################################
 
+CORS(app, origins=['http://localhost:3000'], supports_credentials=True) 
 ### Connect to DB and disconnect
 
 @app.before_request
@@ -156,7 +158,7 @@ def index():
 # 	# return 'ok', 200
 
 
-@app.route('/<id>', methods=['POST'])
+@app.route('/shoppingcart', methods=['POST'])
 def create_cart(id):
 
 	payload = request.get_json()
